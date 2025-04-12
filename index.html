@@ -265,19 +265,6 @@
                     >
                 </div>
             </div>
-
-            <!-- Results Section -->
-            <div id="results-section" class="w-full bg-gray-800/50 backdrop-blur rounded-2xl p-6 shadow-sm hidden">
-                <h2 class="text-xl font-medium mb-4 text-gray-300">Results</h2>
-                <div id="results" class="space-y-2"></div>
-                <div id="stats" class="mt-4"></div>
-            </div>
-
-            <!-- Preview Section -->
-            <div id="preview-section" class="w-full bg-gray-800/50 backdrop-blur rounded-2xl p-6 shadow-sm hidden">
-                <h2 class="text-xl font-medium mb-4 text-gray-300">Preview</h2>
-                <textarea id="preview-text" readonly class="w-full h-48 p-2 bg-gray-800 rounded-md text-gray-200 border border-gray-700"></textarea>
-            </div>
         </div>
 
         <!-- Right Column -->
@@ -323,6 +310,19 @@
                     class="flex-1 p-3 bg-gray-800 text-gray-200 rounded-md hover:bg-gray-700 transition border border-gray-700 disabled:opacity-50 disabled:hover:bg-gray-800 disabled:cursor-not-allowed"
                     tabindex="0"
                 >Download CSV</button>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="w-full bg-gray-800/50 backdrop-blur rounded-2xl p-6 shadow-sm hidden">
+                <h2 class="text-xl font-medium mb-4 text-gray-300">Results</h2>
+                <div id="results" class="space-y-2"></div>
+                <div id="stats" class="mt-4"></div>
+            </div>
+
+            <!-- Preview Section -->
+            <div id="preview-section" class="w-full bg-gray-800/50 backdrop-blur rounded-2xl p-6 shadow-sm hidden">
+                <h2 class="text-xl font-medium mb-4 text-gray-300">Preview</h2>
+                <textarea id="preview-text" readonly class="w-full h-48 p-2 bg-gray-800 rounded-md text-gray-200 border border-gray-700"></textarea>
             </div>
         </div>
     </div>
@@ -501,6 +501,8 @@
             const newItemNameInput = document.getElementById(`item-name-${newItemIndex}`);
             if (newItemNameInput) {
                 newItemNameInput.focus();
+                // Scroll to the input
+                newItemNameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }, 0);
     }
@@ -1063,21 +1065,36 @@
 
     function copyResults() {
         const previewText = document.getElementById('preview-text').value;
-        navigator.clipboard.writeText(previewText).then(() => {
+        // Create a temporary textarea element
+        const textarea = document.createElement('textarea');
+        textarea.value = previewText;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = 0;
+        document.body.appendChild(textarea);
+        
+        try {
+            // Try to select and copy
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand('copy');
+            
             showModal(
                 'Success',
                 'Results copied to clipboard!',
                 () => {}, // Empty function since we don't need any action on confirm
                 true // Single button mode
             );
-        }).catch(err => {
+        } catch (err) {
             showModal(
                 'Error',
                 'Failed to copy: ' + err,
                 () => {}, // Empty function since we don't need any action on confirm
                 true // Single button mode
             );
-        });
+        } finally {
+            // Clean up
+            document.body.removeChild(textarea);
+        }
     }
 
     function resetAll() {
@@ -1166,6 +1183,16 @@
             updateShare(itemIndex, person, 0);
         }
     }
+
+    // Add event listener for input focus
+    document.addEventListener('focus', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            // Use setTimeout to ensure the keyboard has time to appear
+            setTimeout(() => {
+                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+    }, true);
 </script>
 
 </body>
