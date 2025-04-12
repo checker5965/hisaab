@@ -272,6 +272,35 @@
                 <div id="stats" class="mt-4"></div>
             </div>
 
+            <!-- Preview Section -->
+            <div id="preview-section" class="w-full bg-gray-800/50 backdrop-blur rounded-2xl p-6 shadow-sm hidden">
+                <h2 class="text-xl font-medium mb-4 text-gray-300">Preview</h2>
+                <textarea id="preview-text" readonly class="w-full h-48 p-2 bg-gray-800 rounded-md text-gray-200 border border-gray-700"></textarea>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="space-y-8">
+            <!-- Items Section -->
+            <div class="w-full bg-gray-800/50 backdrop-blur rounded-2xl p-6 shadow-sm">
+                <div class="mb-6">
+                    <h2 class="text-xl font-medium text-gray-300">Items</h2>
+                </div>
+                <div class="space-y-4">
+                    <div id="items-list" class="space-y-4"></div>
+                    <button 
+                        onclick="addItem()" 
+                        class="w-full p-4 bg-gray-800 text-gray-200 rounded-md hover:bg-gray-700 transition border border-gray-700 flex items-center justify-center gap-2"
+                        tabindex="0"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add Item
+                    </button>
+                </div>
+            </div>
+
             <!-- Actions -->
             <div class="w-full flex flex-col sm:flex-row gap-4">
                 <button 
@@ -293,32 +322,6 @@
                     class="flex-1 p-3 bg-gray-800 text-gray-200 rounded-md hover:bg-gray-700 transition border border-gray-700 disabled:opacity-50 disabled:hover:bg-gray-800 disabled:cursor-not-allowed"
                     tabindex="0"
                 >Download CSV</button>
-            </div>
-
-            <!-- Preview Section -->
-            <div id="preview-section" class="w-full bg-gray-800/50 backdrop-blur rounded-2xl p-6 shadow-sm hidden">
-                <h2 class="text-xl font-medium mb-4 text-gray-300">Preview</h2>
-                <textarea id="preview-text" readonly class="w-full h-48 p-2 bg-gray-800 rounded-md text-gray-200 border border-gray-700"></textarea>
-            </div>
-        </div>
-
-        <!-- Right Column - Items Section -->
-        <div class="w-full bg-gray-800/50 backdrop-blur rounded-2xl p-6 shadow-sm">
-            <div class="mb-6">
-                <h2 class="text-xl font-medium text-gray-300">Items</h2>
-            </div>
-            <div class="space-y-4">
-                <div id="items-list" class="space-y-4"></div>
-                <button 
-                    onclick="addItem()" 
-                    class="w-full p-4 bg-gray-800 text-gray-200 rounded-md hover:bg-gray-700 transition border border-gray-700 flex items-center justify-center gap-2"
-                    tabindex="0"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Add Item
-                </button>
             </div>
         </div>
     </div>
@@ -534,7 +537,7 @@
             
             container.innerHTML += `
             <div class='bg-gray-800 p-4 rounded-md space-y-4 fade-enter fade-enter-active border border-gray-700'>
-                <div class='flex flex-wrap gap-4 items-center'>
+                <div class='flex flex-col sm:flex-row gap-4'>
                     <input 
                         id="item-name-${itemIndex}"
                         onchange='updateItemName(${itemIndex}, this.value)' 
@@ -542,23 +545,23 @@
                         placeholder='Item Name' 
                         class='flex-1 min-w-[200px] p-2 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:border-gray-600'
                     >
-                    <div class="relative w-32">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="text-gray-400">₹</span>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <div class="relative p-2 flex-1 sm:w-32">
+                            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                <span class="text-gray-400">₹</span>
+                            </div>
+                            <input 
+                                id="item-price-${itemIndex}"
+                                onchange='updateItemPrice(${itemIndex}, this.value)' 
+                                onfocus='handleNumberFocus(this)'
+                                value='${item.price || ""}' 
+                                type='number' 
+                                min='0.01'
+                                step='0.01'
+                                placeholder='Price' 
+                                class='w-full p-2 pl-7 bg-gray-800 rounded-md text-right border border-gray-700 focus:outline-none focus:border-gray-600'
+                            >
                         </div>
-                        <input 
-                            id="item-price-${itemIndex}"
-                            onchange='updateItemPrice(${itemIndex}, this.value)' 
-                            onfocus='handleNumberFocus(this)'
-                            value='${item.price || ""}' 
-                            type='number' 
-                            min='0.01'
-                            step='0.01'
-                            placeholder='Price' 
-                            class='w-full p-2 pl-7 bg-gray-800 rounded-md text-right border border-gray-700 focus:outline-none focus:border-gray-600'
-                        >
-                    </div>
-                    <div class="flex gap-2">
                         <button 
                             onclick='splitEqually(${itemIndex})'
                             class='p-2 text-gray-400 hover:text-gray-200 rounded-md transition tooltip'
@@ -566,8 +569,7 @@
                         >
                             <span class="tooltip-text">Split equally among all people</span>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.97zm-16.5.52a49.5 49.5 0 013-.52m0 0l-2.62 10.726c-.122.499.106 1.028.589 1.202a5.989 5.989 0 002.031.352 5.989 5.989 0 002.031-.352c.483-.174.711-.703.59-1.202L5.25 4.97z" />
-                            </svg>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.97zm-16.5.52a49.5 49.5 0 013-.52m0 0l-2.62 10.726c-.122.499.106 1.028.589 1.202a5.989 5.989 0 002.031.352 5.989 5.989 0 002.031-.352c.483-.174.711-.703.59-1.202L5.25 4.97z" /></svg>
                         </button>
                         <button 
                             id="remove-item-${itemIndex}"
